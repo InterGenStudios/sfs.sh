@@ -144,9 +144,14 @@ function PASTE ()
     curl -d name=sfs --data-urlencode text@$PASTEFILE http://nobits.ml/api/create > TEMPASTE
     sed -i 's/view/view\/raw/g' TEMPASTE
     echo
+    separator
+    echo
     echo "Your results are at $(cat TEMPASTE)"
     echo
     echo "Your paste will expire in 30 days"
+    echo
+    separator
+    echo
     rm -rf TEMPASTE
 }
 
