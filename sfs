@@ -19,7 +19,6 @@ else
         echo "Hey Sparky, \"$TARGETSIZE\" isn't a number in MB-- let's run it again, shall we?"
         echo
         echo
-        echo
         exit 1
     else
         SIZE=$TARGETSIZE
@@ -37,8 +36,6 @@ function countfiles {
         echo "Total number of files in $TARGET: $totalfilecount"
         echo
     else
-        echo
-        echo
         echo
     fi
 }
@@ -75,42 +72,32 @@ read FILECOUNTER;
 if [ -z "$FILECOUNTER" ]; then
     FILESEARCH=NO
     echo
-    echo
     echo "Filecounter option skipped"                                         
-    echo
     echo
 else 
     if [[ $FILECOUNTER =~ $RE ]]; then
         echo
-        echo
         echo "Since when does (y/N)? mean 'enter a number'?... Let's run it again Sparky..."
         echo
         separator
-        echo
         echo
         exit 1
     else
         if [[ $FILECOUNTER =~ y ]]; then
             FILESEARCH=YES
             echo
-            echo
             echo "Filecounter enabled"
-            echo
             echo
         else
             if [[ $FILECOUNTER =~ Y ]]; then
                 FILESEARCH=YES
                 echo
-                echo
                 echo "Filecounter enabled"
-                echo
                 echo
             else
                 FILESEARCH=NO
                 echo
-                echo
                 echo "Filecounter option skipped"
-                echo
                 echo
             fi
         fi
@@ -118,7 +105,6 @@ else
 fi
 
 function SEARCH {
-    echo
     echo
     echo "Server: $HOSTNAME $stamp"
     separator
@@ -128,22 +114,16 @@ function SEARCH {
     find $TARGET -type f -size +"$searchsize"k -exec ls -lh {} \; 2>/dev/null| awk '{ printf "%- 130s %s\n", $9,$5; }'
     echo
     echo
-    echo
     echo "Total Size of $TARGET: $DIRSIZE"
     countfiles
-    echo
     echo
     echo "Search complete"
     separator
     echo
     echo
-    echo
-    echo
 }
 
 function STOP {
-    echo
-    echo
     echo
     echo
     echo "Hey Sparky, \"$CHOICE\" isn't a valid path on this server."
@@ -164,7 +144,6 @@ function PASTE ()
     curl -d name=sfs --data-urlencode text@$PASTEFILE http://nobits.ml/api/create > TEMPASTE
     sed -i 's/view/view\/raw/g' TEMPASTE
     echo
-    echo
     echo "Your results are at $(cat TEMPASTE)"
     echo
     echo "Your paste will expire in 30 days"
@@ -180,7 +159,6 @@ PASTE /root/support/"$SIZE"M_File_*
 rm -rf /root/support/"$SIZE"M_File_*
 echo
 echo
-echo
 
 else
 
@@ -194,7 +172,6 @@ else
           SEARCH 2>&1 | tee /root/support/"$SIZE"M_File_Search_Results-"$stamp"
           PASTE /root/support/"$SIZE"M_File_*
           rm -rf /root/support/"$SIZE"M_File_*
-          echo
           echo
           echo
       fi
@@ -213,7 +190,6 @@ else
           SEARCH 2>&1 | tee /root/support/"$SIZE"M_File_Search_Results-"$stamp"
           PASTE /root/support/"$SIZE"M_File_*
           rm -rf /root/support/"$SIZE"M_File_*
-          echo
           echo
           echo
       fi
