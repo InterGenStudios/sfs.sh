@@ -64,7 +64,7 @@ read CHOICE;
 
 echo " "
 echo " "
-echo -n "While we're looking, should we find the total number of files -including subdirectories- in that path (y/N)? "
+echo -n "While we're at it, should we find the total number of files (including all subdirectory contents) in that path (y/N)? "
 
 read FILECOUNTER;
 
