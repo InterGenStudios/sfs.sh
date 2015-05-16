@@ -56,6 +56,7 @@ echo "1) User Directories"
 echo "2) /var/log Directory"
 echo "3) cPanel Logs Directory"
 echo "4) MySQL Directory"
+echo "5) cPanel Backup Directory"
 echo
 echo "[NoEntry] = /"
 echo
@@ -186,6 +187,7 @@ else
           2) TARGET=/var/log;;
           3) TARGET=/usr/local/cpanel/logs;;
           4) TARGET=/var/lib/mysql;;
+          5) TARGET=/backup;;
       esac
       if [ ! -d "$TARGET" ]; then
           STOP
