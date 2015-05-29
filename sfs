@@ -138,7 +138,7 @@ elif ! [[ $TARGETSIZE =~ $RE ]]; then
     echo
     echo "Hey Sparky, \"$TARGETSIZE\" isn't a number-size in MB-- let's run it again, shall we?"
     sleep 2
-    GET_TARGETSIZE
+    GET_TARGET_FILESIZE
 else
     SIZE=$TARGETSIZE
     sleep 1
@@ -324,6 +324,7 @@ echo ")"
 echo
 WHITE
 echo -n "[enter choice or directory path]:"
+read DIR_CHOICE
 }
 
 #####################
