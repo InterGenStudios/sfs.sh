@@ -297,19 +297,18 @@ GET_TARGET_DIR
 GET_FILECOUNTER_CHOICE
 CHECK_FILECOUNTER_CHOICE
 
-if [ -z "$DIR_CHOICE" ]; then
-    TARGET_DIR=/
-elif ! [[ $DIR_CHOICE =~ $RE ]]; then 
-    TARGET_DIR=$DIR_CHOICE
-else
-    case $DIR_CHOICE in
+case $DIR_CHOICE in
           1) TARGET_DIR=/home;;
           2) TARGET_DIR=/var/log;;
           3) TARGET_DIR=/usr/local/cpanel/logs;;
           4) TARGET_DIR=/var/lib/mysql;;
           5) TARGET_DIR=/backup;;
-    esac
-fi
+          *) if [ -z "$DIR_CHOICE" ]; then
+                TARGET_DIR=/
+             elif ! [[ $DIR_CHOICE =~ $RE ]]; then
+                TARGET_DIR=$DIR_CHOICE
+             fi;;
+esac
 CHECK_TARGET_DIR_EXISTS
 DIR_SIZE="$(du -h $TARGET_DIR 2>/dev/null | tail -1 | awk '{print $1}')"
 mkdir -p /root/support
