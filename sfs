@@ -308,7 +308,7 @@ else
           5) TARGET_DIR=/backup;;
     esac
 fi
-CHECK_TARGET_EXISTS
+CHECK_TARGET_DIR_EXISTS
 DIR_SIZE="$(du -h $TARGET_DIR 2>/dev/null | tail -1 | awk '{print $1}')"
 mkdir -p /root/support
 clear
