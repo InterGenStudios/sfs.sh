@@ -259,7 +259,7 @@ fi
 # Counts # of files if target directory
 COUNT_FILES () {
     if [ "$FILECOUNTER" = YES ]; then
-        TOTAL_FILE_COUNT="$(echo $(($(du -ah $TARGET 2>/dev/null | wc -l)-1)))"
+        TOTAL_FILE_COUNT="$(echo $(($(du -ah "$TARGET_DIR" 2>/dev/null | wc -l) - 1)))"
         echo
         GREEN
         printf "Total number of files in "
