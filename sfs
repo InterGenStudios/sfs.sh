@@ -394,6 +394,7 @@ else
         CHECK_FILECOUNTER_CHOICE
     elif [ -z $1 ] && [ -z $2 ]; then
         GET_INPUT
+    fi
 fi
 CHECK_TARGET_DIR_EXISTS
 DIR_SIZE="$(du -h $TARGET_DIR 2>/dev/null | tail -1 | awk '{print $1}')"
