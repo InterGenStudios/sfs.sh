@@ -57,11 +57,8 @@ vers=1.0
 # Simple regex for number checking
 RE='^[0-9]+$'
 
-# Default search size
-searchsize="$(( $SIZE * 1000 ))"
-
 # Sets timestamp
-stamp="$(echo $(date +"%T_%m-%d-%Y"))"
+stamp="$(echo $(date +"%m-%d-%Y") $(date +"%T"))"
 
 #########################################
 ##-------------------------------------##
@@ -159,6 +156,8 @@ LOOP () {
 }
 
 SEARCH () {
+# Default search size
+SEARCHSIZE=$(($SIZE * 1000))
 GREEN
 printf "Server: "
 WHITE
@@ -175,7 +174,7 @@ printf "%s" "$SIZE"
 GREEN
 echo "M"
 SEPARATOR
-find $TARGET_DIR -type f -size +"$searchsize"k -exec ls -lh {} \; 2>/dev/null| awk '{ printf "%- 130s %s\n", $9,$5; }'
+find "$TARGET_DIR" -type f -size +"$SEARCHSIZE"k -exec ls -lh {} \; 2>/dev/null | awk '{ printf "%- 130s %s\n", $9,$5; }'
 printf "\n\n"
 GREEN
 printf "Total Size of "
