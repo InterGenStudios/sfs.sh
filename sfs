@@ -123,6 +123,21 @@ WHITE
 printf "\n\n"
 }
 
+HELPTEXT () {
+clear
+HEADER
+GREEN
+echo "sfs help:"
+echo
+echo "SFS is a simple cPanel server utility for finding files of a target size and pastebinning the results."
+echo
+echo "USAGE:"
+WHITE
+echo "sfs [domain_name] [target_file_size] / [domain_name] / -h {runs helptext}
+printf "\n\n"
+exit 0
+}
+
 GET_TARGET_FILESIZE () {
 clear
 HEADER
@@ -325,6 +340,25 @@ echo
 WHITE
 echo -n "[enter choice or directory path]:"
 read DIR_CHOICE
+case $DIR_CHOICE in
+          1) TARGET_DIR=/home;;
+          2) TARGET_DIR=/var/log;;
+          3) TARGET_DIR=/usr/local/cpanel/logs;;
+          4) TARGET_DIR=/var/lib/mysql;;
+          5) TARGET_DIR=/backup;;
+          *) if [ -z "$DIR_CHOICE" ]; then
+                TARGET_DIR=/
+             elif ! [[ $DIR_CHOICE =~ $RE ]]; then
+                TARGET_DIR=$DIR_CHOICE
+             fi;;
+esac
+}
+
+GET_INPUT () {
+GET_TARGET_FILESIZE
+GET_TARGET_DIR
+GET_FILECOUNTER_CHOICE
+CHECK_FILECOUNTER_CHOICE
 }
 
 #####################
@@ -339,24 +373,23 @@ read DIR_CHOICE
 ##---------------------##
 #########################
 
-
-GET_TARGET_FILESIZE
-GET_TARGET_DIR
-GET_FILECOUNTER_CHOICE
-CHECK_FILECOUNTER_CHOICE
-
-case $DIR_CHOICE in
-          1) TARGET_DIR=/home;;
-          2) TARGET_DIR=/var/log;;
-          3) TARGET_DIR=/usr/local/cpanel/logs;;
-          4) TARGET_DIR=/var/lib/mysql;;
-          5) TARGET_DIR=/backup;;
-          *) if [ -z "$DIR_CHOICE" ]; then
-                TARGET_DIR=/
-             elif ! [[ $DIR_CHOICE =~ $RE ]]; then
-                TARGET_DIR=$DIR_CHOICE
-             fi;;
-esac
+if [ $1 = -h]; then
+    HELPTEXT
+else
+    if [ -d $1 ] && [[ $2 =~ $RE ]]; then
+        TARGET_DIR=$1
+        SIZE=$2
+        GET_FILECOUNTER_CHOICE
+        CHECK_FILECOUNTER_CHOICE
+    elif [ -d $1 ] && [ -z $2 ]; then
+        TARGET_DIR=$1
+        GET_TARGET_FILESIZE
+        GET_FILECOUNTER_CHOICE
+        CHECK_FILECOUNTER_CHOICE
+    else
+        GET_INPUT
+    fi
+fi
 CHECK_TARGET_DIR_EXISTS
 DIR_SIZE="$(du -h $TARGET_DIR 2>/dev/null | tail -1 | awk '{print $1}')"
 mkdir -p /root/support
