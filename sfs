@@ -158,6 +158,7 @@ LOOP () {
 SEARCH () {
 # Default search size
 SEARCHSIZE=$(($SIZE * 1000))
+tput cuu 2 && tput el
 GREEN
 printf "Server: "
 WHITE
@@ -229,6 +230,7 @@ if [ -z "$FILE_COUNTER" ] || [ "$FILE_COUNTER" = N ] || [ "$FILE_COUNTER" = n ];
     echo "Filecounter skipped"
     WHITE
     echo
+    echo "Getting total directory size..."
 elif [[ $FILE_COUNTER =~ $RE ]]; then
     echo
     YELLOW
@@ -250,6 +252,7 @@ else
     echo "Filecounter enabled"
     WHITE
     echo
+    echo "Getting total directory size..."
 fi
 }
 
