@@ -167,7 +167,7 @@ SEPARATOR
 GREEN
 printf "Searching recursively in "
 WHITE
-printf "%s" "$TARGET"
+printf "%s" "$TARGET_DIR"
 GREEN
 printf " for files >= "
 WHITE
@@ -175,12 +175,12 @@ printf "%s" "$SIZE"
 GREEN
 echo "M"
 SEPARATOR
-find $TARGET -type f -size +"$searchsize"k -exec ls -lh {} \; 2>/dev/null| awk '{ printf "%- 130s %s\n", $9,$5; }'
+find $TARGET_DIR -type f -size +"$searchsize"k -exec ls -lh {} \; 2>/dev/null| awk '{ printf "%- 130s %s\n", $9,$5; }'
 printf "\n\n"
 GREEN
 printf "Total Size of "
 WHITE
-printf "%s" "$TARGET"
+printf "%s" "$TARGET_DIR"
 GREEN
 printf ": "
 WHITE
@@ -193,7 +193,7 @@ printf "\n\n"
 
 PASTE () {
 PASTEFILE=$@;
-curl -d name=sfs -d private=1 --data-urlencode text@$PASTEFILE http://nobits.ml/api/create > TEMPASTE
+curl -d name=sfs -d private=1 --data-urlencode text@$PASTEFILE -s http://nobits.ml/api/create > TEMPASTE
 sed -i 's/view/view\/raw/g' TEMPASTE
 SEPARATOR
 GREEN
