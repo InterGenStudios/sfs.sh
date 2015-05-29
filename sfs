@@ -382,18 +382,20 @@ CHECK_FILECOUNTER_CHOICE
 if [ $1 = -h ]; then
     HELPTEXT
 else
-    if [ -d $1 ] && [[ $2 =~ $RE ]]; then
-        TARGET_DIR=$1
-        SIZE=$2
-        GET_FILECOUNTER_CHOICE
-        CHECK_FILECOUNTER_CHOICE
-    elif [ -d $1 ] && [ -z $2 ]; then
-        TARGET_DIR=$1
-        GET_TARGET_FILESIZE
-        GET_FILECOUNTER_CHOICE
-        CHECK_FILECOUNTER_CHOICE
-    elif [ -z $1 ] && [ -z $2 ]; then
+    if [ -z $1 ]; then
         GET_INPUT
+    else
+        if [ -d $1 ] && [[ $2 =~ $RE ]]; then
+            TARGET_DIR=$1
+            SIZE=$2
+            GET_FILECOUNTER_CHOICE
+            CHECK_FILECOUNTER_CHOICE
+        elif [ -d $1 ] && [ -z $2 ]; then
+            TARGET_DIR=$1
+            GET_TARGET_FILESIZE
+            GET_FILECOUNTER_CHOICE
+            CHECK_FILECOUNTER_CHOICE
+        fi
     fi
 fi
 CHECK_TARGET_DIR_EXISTS
