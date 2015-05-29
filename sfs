@@ -313,7 +313,7 @@ mkdir -p /root/support
 clear
 HEADER
 SEARCH 2>&1 | tee searchfile
-sed -i -e 's|[1m[32m||g' -e 's|(B[m||g' -e 's|[1m[34m||g' searchfile
+sed -i -e 's/[\x01-\x1F\x7F]//g' -e 's|\[1m\[32m||g' -e 's|(B\[m||g' -e 's|\[1m\[34m||g' searchfile
 PASTE searchfile
 rm -rf searchfile
 printf "\n\n"
