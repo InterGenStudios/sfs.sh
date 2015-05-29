@@ -129,9 +129,15 @@ HEADER
 GREEN
 echo "sfs help:"
 echo
-echo "SFS is a simple cPanel server utility for finding files of a target size and pastebinning the results."
+echo "SFS is a simple cPanel server utility for finding files of a target size"
+echo "and pastebinning the results."
 echo
+WHITE
+echo "------------------"
+echo
+GREEN
 echo "USAGE:"
+echo
 WHITE
 echo "sfs [domain_name] [target_file_size] / [domain_name] / -h {runs helptext}"
 printf "\n\n"
