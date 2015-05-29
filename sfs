@@ -139,7 +139,7 @@ GREEN
 echo "USAGE:"
 echo
 WHITE
-echo "sfs [domain_name] [target_file_size] / [domain_name] / -h {runs helptext}"
+echo "sfs [domain_name] [target_file_size] || [domain_name] || -h (runs helptext)"
 printf "\n\n"
 exit 0
 }
