@@ -373,7 +373,7 @@ CHECK_FILECOUNTER_CHOICE
 ##---------------------##
 #########################
 
-if [ $1 = -h]; then
+if [ $1 = -h ]; then
     HELPTEXT
 else
     if [ -d $1 ] && [[ $2 =~ $RE ]]; then
