@@ -133,7 +133,7 @@ echo "SFS is a simple cPanel server utility for finding files of a target size a
 echo
 echo "USAGE:"
 WHITE
-echo "sfs [domain_name] [target_file_size] / [domain_name] / -h {runs helptext}
+echo "sfs [domain_name] [target_file_size] / [domain_name] / -h {runs helptext}"
 printf "\n\n"
 exit 0
 }
