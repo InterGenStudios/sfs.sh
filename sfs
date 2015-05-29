@@ -279,6 +279,53 @@ if [ ! -d "$TARGET_DIR" ]; then
 fi
 }
 
+GET_TARGET_DIR () {
+clear
+HEADER
+GREEN
+printf "Enter target path we're going to search recursively for files >= "
+WHITE
+printf "%s" "$SIZE"
+GREEN
+echo "M,"
+echo "or choose from the following directories:"
+echo
+WHITE
+printf "1) "
+GREEN
+echo "User Directories"
+WHITE
+printf "2) "
+GREEN
+echo "/var/log Directory"
+WHITE
+printf "3) "
+GREEN
+echo "cPanel Logs Directory"
+WHITE
+printf "4) "
+GREEN
+echo "MySQL Directory"
+WHITE
+printf "5) "
+GREEN
+echo "cPanel Backup Directory"
+echo
+WHITE
+printf "("
+GREEN
+printf "default "
+WHITE
+printf "= "
+GREEN
+printf "Root Directory"
+WHITE
+echo ")"
+echo
+WHITE
+echo -n "[enter choice or directory path]:"
+}
+
 #####################
 ##-----------------##
 ## END - FUNCTIONS ##
