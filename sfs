@@ -51,7 +51,7 @@ fi
 ##---------------------------------------##
 ###########################################
 
-# Sets purgexim version number
+# Sets sfs version number
 vers=1.0
 
 # Simple regex for number checking
