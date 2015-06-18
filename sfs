@@ -400,13 +400,13 @@ else
 fi
 CHECK_TARGET_DIR_EXISTS
 DIR_SIZE="$(du -h $TARGET_DIR 2>/dev/null | tail -1 | awk '{print $1}')"
-mkdir -p /root/support
+mkdir -p /root/support/logs/sfs_logs
 clear
 HEADER
 SEARCH 2>&1 | tee searchfile
 sed -i -e 's/[\x01-\x1F\x7F]//g' -e 's|\[1m\[32m||g' -e 's|(B\[m||g' -e 's|\[1m\[34m||g' -e 's|\[2A\[K||g' searchfile
 PASTE searchfile
-rm -rf searchfile
+mv searchfile /root/support/logs/sfs_logs/sfs_"$HOSTNAME"_"$(date +"%m-%d-%Y_%T")"
 printf "\n\n"
 exit 0
 
