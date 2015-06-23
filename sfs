@@ -161,7 +161,7 @@ elif ! [[ $TARGETSIZE =~ $RE ]]; then
     sleep 2
     GET_TARGET_FILESIZE
 else
-    SIZE=$TARGETSIZE
+    SIZE="$TARGETSIZE"
     sleep 1
 fi
 }
@@ -214,7 +214,7 @@ printf "\n\n"
 
 PASTE () {
 PASTEFILE=$@;
-curl -d name=sfs -d private=1 --data-urlencode text@$PASTEFILE -s http://nobits.ml/api/create > TEMPASTE
+curl -d name=sfs -d private=1 --data-urlencode text@"$PASTEFILE" -s http://nobits.ml/api/create > TEMPASTE
 sed -i 's/view/view\/raw/g' TEMPASTE
 SEPARATOR
 GREEN
@@ -244,7 +244,7 @@ read FILE_COUNTER
 
 # Checks for FILESEARCH flag
 CHECK_FILECOUNTER_CHOICE () {
-if [ -z "$FILE_COUNTER" ] || [ "$FILE_COUNTER" = N ] || [ "$FILE_COUNTER" = n ]; then
+if [ -z "$FILE_COUNTER" ] || [ "$FILE_COUNTER" = "N" ] || [ "$FILE_COUNTER" = "n" ]; then
     FILECOUNTER=NO
     echo
     YELLOW
@@ -279,7 +279,7 @@ fi
 
 # Counts # of files if target directory
 COUNT_FILES () {
-    if [ "$FILECOUNTER" = YES ]; then
+    if [ "$FILECOUNTER" = "YES" ]; then
         TOTAL_FILE_COUNT="$(echo $(($(du -ah "$TARGET_DIR" 2>/dev/null | wc -l) - 1)))"
         echo
         GREEN
@@ -346,7 +346,7 @@ echo
 WHITE
 echo -n "[enter choice or directory path]:"
 read DIR_CHOICE
-case $DIR_CHOICE in
+case "$DIR_CHOICE" in
           1) TARGET_DIR=/home;;
           2) TARGET_DIR=/var/log;;
           3) TARGET_DIR=/usr/local/cpanel/logs;;
@@ -379,19 +379,19 @@ CHECK_FILECOUNTER_CHOICE
 ##---------------------##
 #########################
 
-if [ $1 = -h ]; then
+if [ "$1" = "-h" ]; then
     HELPTEXT
 else
     if [ -z $1 ]; then
         GET_INPUT
     else
         if [ -d $1 ] && [[ $2 =~ $RE ]]; then
-            TARGET_DIR=$1
-            SIZE=$2
+            TARGET_DIR="$1"
+            SIZE="$2"
             GET_FILECOUNTER_CHOICE
             CHECK_FILECOUNTER_CHOICE
         elif [ -d $1 ] && [ -z $2 ]; then
-            TARGET_DIR=$1
+            TARGET_DIR="$1"
             GET_TARGET_FILESIZE
             GET_FILECOUNTER_CHOICE
             CHECK_FILECOUNTER_CHOICE
