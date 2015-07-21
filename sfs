@@ -1,7 +1,7 @@
 #!/bin/bash
 # -------------------------------------------------------------------------------------------
 # sfs - s.earch f.ile s.ize and create a pastebin of the results
-# sfs Version: 1.0
+# sfs Version: 1.1
 # Github: https://github.com/InterGenStudios/sfs
 # ---------------------------------------------------
 # InterGenStudios: 5-3-15
@@ -18,32 +18,6 @@
 # any later version.
 # ------------------
 
-#############################################
-##-----------------------------------------##
-## BEGIN - MAKE SURE WE'RE RUNNING AS ROOT ##
-##-----------------------------------------##
-#############################################
-
-if [ "$(id -u)" != "0" ]; then
-    tput bold
-    tput setaf 1
-    printf "\n\n"
-    echo "--------"
-    echo "WARNING!"
-    echo "--------"
-    echo
-    tput sgr0
-    echo "sfs must be run as root!"
-    echo "(Exiting now...)"
-    printf "\n\n"
-    exit 1
-fi
-
-###########################################
-##---------------------------------------##
-## END - MAKE SURE WE'RE RUNNING AS ROOT ##
-##---------------------------------------##
-###########################################
 
 ###########################################
 ##---------------------------------------##
@@ -52,7 +26,7 @@ fi
 ###########################################
 
 # Sets sfs version number
-vers=1.0
+vers=1.1
 
 # Simple regex for number checking
 RE='^[0-9]+$'
@@ -73,298 +47,199 @@ stamp="$(echo $(date +"%m-%d-%Y") $(date +"%T"))"
 #######################
 
 # Colors trailing text Red
-RED () {
-tput bold
-tput setaf 1
-}
+RED="\e[1m\e[31m"
 
 # Colors trailing text Green
-GREEN () {
-tput bold
-tput setaf 2
-}
+GREEN="\e[1m\e[32m"
 
 # Colors trailing text Yellow
-YELLOW () {
-tput bold
-tput setaf 3
-}
+YELLOW="\e[1m\e[33m"
 
 # Colors trailing text Blue
-BLUE () {
-tput bold
-tput setaf 4
-}
+BLUE="\e[1m\e[34m"
+
+# Colors trailing text Bold White
+WHITE="\e[1m\e[37m"
 
 # Removes any previously set colors
-WHITE () {
-tput sgr0
-}
+NOCOLOR="\e[0m"
 
 # A simple divider
 SEPARATOR () {
-BLUE
-echo
-echo "-----------------------------------------------------------------------------------"
-echo
-WHITE
+
+    echo -e "\n\n${BLUE}------------------------------------------------------------------------------${NOCOLOR}\n\n"
+
 }
 
 # Creates uniform look during script execution when called after any clear command
 HEADER () {
-echo
-BLUE
-echo "============================================================================"
-WHITE
-echo "  sfs v$vers"
-BLUE
-echo "============================================================================"
-WHITE
-printf "\n\n"
+
+    echo -e "\n\n${BLUE}______________________________________________________________________________________________${NOCOLOR}\n"
+    echo -e "${WHITE}    sfs v${GREEN}$vers${NOCOLOR}"
+    echo -e "${BLUE}______________________________________________________________________________________________${NOCOLOR}\n\n"
+
 }
 
 HELPTEXT () {
-clear
-HEADER
-GREEN
-echo "sfs help:"
-echo
-echo "SFS is a simple cPanel server utility for finding files of a target size"
-echo "and pastebinning the results."
-echo
-WHITE
-echo "------------------"
-echo
-GREEN
-echo "USAGE:"
-echo
-WHITE
-echo "sfs [domain_name] [target_file_size] || [domain_name] || -h (runs helptext)"
-printf "\n\n"
-exit 0
+
+    clear
+    HEADER
+    echo -e "${GREEN}sfs help:${NOCOLOR}\n"
+    echo "SFS is a simple cPanel server utility for finding files of a target size"
+    echo -e "and pastebinning the results.\n"
+    echo -e "------------------\n"
+    echo -e "${GREEN}USAGE:${NOCOLOR}\n"
+    echo -e "sfs  ...[${GREEN}target_directory${NOCOLOR}] [${GREEN}target_file_size${NOCOLOR}]   |   ...[${GREEN}target_directory${NOCOLOR}]  |  ${GREEN}-h ${NOCOLOR}(runs helptext)\n\n"
+    exit 0
+
 }
 
 GET_TARGET_FILESIZE () {
-clear
-HEADER
-GREEN
-printf "In MB, what size of files are we looking for? "
-WHITE
-echo -n "[Default = 100]: "
-read TARGETSIZE
-if [ -z "$TARGETSIZE" ]; then
-    SIZE=100
-    sleep 1
-elif ! [[ $TARGETSIZE =~ $RE ]]; then
-    echo
-    echo "Hey Sparky, \"$TARGETSIZE\" isn't a number-size in MB-- let's run it again, shall we?"
-    sleep 2
-    GET_TARGET_FILESIZE
-else
-    SIZE="$TARGETSIZE"
-    sleep 1
-fi
+
+    clear
+    HEADER
+    echo -e -n "  ${GREEN}In ${WHITE}MB, ${GREEN}enter target file size${NOCOLOR} [Default = 100]: "
+    read TARGETSIZE
+    if [ -z "$TARGETSIZE" ]; then
+        SIZE=100
+        sleep 1
+    elif ! [[ $TARGETSIZE =~ $RE ]]; then
+        echo
+        echo -e "\n${RED}WARNING!${NOCOLOR}\n\n"
+        echo -e "${WHITE}$TARGETSIZE ${GREEN}isn't a number-size in MB.\n  Restarting...${NOCOLOR}"
+        sleep 2
+        GET_TARGET_FILESIZE
+    else
+        SIZE="$TARGETSIZE"
+        sleep 1
+    fi
+
 }
 
 LOOP () {
-    echo
-    echo "Hey Sparky, \"$CHOICE\" isn't a valid path on this server."
-    echo
+
+    echo -e "\n  ${RED}WARNING!${NOCOLOR}\n"
+    echo -e "  ${WHITE}$CHOICE ${GREEN}isn't a valid path on this server.\n"
     sleep 1
-    echo "Double check the path you're trying to search, and let's run it again- shall we?"
+    echo -e "  ${GREEN}Please double check that you want to search.${NOCOLOR}\n\n  (Restarting...)"
     SEPARATOR
+    sleep 1
     GET_TARGET_FILESIZE
+
 }
 
 SEARCH () {
-# Default search size
-SEARCHSIZE=$(($SIZE * 1000))
-tput cuu 2 && tput el
-GREEN
-printf "Server: "
-WHITE
-echo "$HOSTNAME $stamp"
-SEPARATOR
-GREEN
-printf "Searching recursively in "
-WHITE
-printf "%s" "$TARGET_DIR"
-GREEN
-printf " for files >= "
-WHITE
-printf "%s" "$SIZE"
-GREEN
-echo "M"
-SEPARATOR
-find "$TARGET_DIR" -type f -size +"$SEARCHSIZE"k -exec ls -lh {} \; 2>/dev/null | awk '{ printf "%- 130s %s\n", $9,$5; }'
-printf "\n\n"
-GREEN
-printf "Total Size of "
-WHITE
-printf "%s" "$TARGET_DIR"
-GREEN
-printf ": "
-WHITE
-echo "$DIR_SIZE"
-COUNT_FILES
-echo "Search complete"
-SEPARATOR
-printf "\n\n"
+
+    # Default search size
+    SEARCHSIZE=$(($SIZE * 1000))
+    tput cuu 2 && tput el
+    echo -e "\n\n  ${GREEN}Server: ${WHITE}$HOSTNAME ${NOCOLOR}$stamp"
+    SEPARATOR
+    echo -e "  ${GREEN}Searching recursively in ${WHITE}$TARGET_DIR ${GREEN}for files ${WHITE}>= $SIZE${GREEN}M${NOCOLOR}"
+    SEPARATOR
+    find "$TARGET_DIR" -type f -size +"$SEARCHSIZE"k -exec ls -lh {} \; 2>/dev/null | awk '{ printf "%- 130s %s\n", $9,$5; }'
+    echo -e "\n\n  ${GREEN}Total Size of ${WHITE}$TARGET_DIR${GREEN}: ${WHITE}$DIR_SIZE${NOCOLOR}\n"
+    COUNT_FILES
+    echo "  Search Complete"
+    SEPARATOR
+    printf "\n\n"
+
 }
 
 PASTE () {
-PASTEFILE=$@;
-curl -d name=sfs -d private=1 --data-urlencode text@"$PASTEFILE" -s http://nobits.ml/api/create > TEMPASTE
-sed -i 's/view/view\/raw/g' TEMPASTE
-SEPARATOR
-GREEN
-printf "Your results are at "
-WHITE
-echo "$(cat TEMPASTE)"
-echo
-GREEN
-echo "Your paste will expire in 30 days"
-SEPARATOR
-rm -rf TEMPASTE
+
+    PASTEFILE=$@;
+    curl -d name=sfs -d private=1 --data-urlencode text@"$PASTEFILE" -s http://nobits.ml/api/create > TEMPASTE
+    sed -i 's/view/view\/raw/g' TEMPASTE
+    SEPARATOR
+    echo -e "  ${GREEN}Your results are at${WHITE}:\n"
+    echo -e "  ${BLUE}  ====> ${WHITE}$(cat TEMPASTE)${NOCOLOR}\n\n  ${GREEN}Your paste will expire in 30 days${NOCOLOR}"
+    SEPARATOR
+    rm TEMPASTE
+
 }
 
 GET_FILECOUNTER_CHOICE () {
-clear
-HEADER
-GREEN
-echo "While we're looking, should we find the total number of files"
-WHITE
-echo "                                        (including subdirectories)"
-GREEN
-printf "                                                    in your chosen directory "
-WHITE
-echo -n "(y/N)? "
-read FILE_COUNTER
+
+    clear
+    HEADER
+    echo -e -n "  ${GREEN}Find the number of total files in the ${WHITE}TARGET DIRECTORY${NOCOLOR} [${WHITE}y/N${NOCOLOR}]? "
+    read FILE_COUNTER
+
 }
 
 # Checks for FILESEARCH flag
 CHECK_FILECOUNTER_CHOICE () {
-if [ -z "$FILE_COUNTER" ] || [ "$FILE_COUNTER" = "N" ] || [ "$FILE_COUNTER" = "n" ]; then
-    FILECOUNTER=NO
-    echo
-    YELLOW
-    echo "Filecounter skipped"
-    WHITE
-    echo
-    echo "Getting total directory size..."
-elif [[ $FILE_COUNTER =~ $RE ]]; then
-    echo
-    YELLOW
-    echo "I ask for 'y' or 'N', and you enter a number... How does that even work?"
-    SEPARATOR
-    sleep 1
-    YELLOW
-    echo "It doesn't, actually."
-    sleep 1
-    RED
-    echo "Restarting..."
-    WHITE
-    sleep 2
-    GET_TARGET_FILESIZE
-else
-    FILECOUNTER=YES
-    echo
-    GREEN
-    echo "Filecounter enabled"
-    WHITE
-    echo
-    echo "Getting total directory size..."
-fi
+
+    if [ -z "$FILE_COUNTER" ] || [ "$FILE_COUNTER" = "N" ] || [ "$FILE_COUNTER" = "n" ]; then
+        FILECOUNTER=NO
+        echo -e "\n  ${YELLOW}FILECOUNTER SKIPPED\n  ${NOCOLOR}Getting target directory size..."
+    elif [[ $FILE_COUNTER =~ $RE ]]; then
+        echo -e "\n  ${RED}WARNING!\n  ${NOCOLOR}Incorrect entry...\nRestarting..."
+        sleep 2
+        GET_TARGET_FILESIZE
+    else
+        FILECOUNTER=YES
+        echo -e "  ${GREEN}FILECOUNTER ENABLED"
+        GREEN
+        echo "  Filecounter enabled\n  ${NOCOLOR}Getting target directory size..."
+    fi
+
 }
 
 # Counts # of files if target directory
 COUNT_FILES () {
+
     if [ "$FILECOUNTER" = "YES" ]; then
         TOTAL_FILE_COUNT="$(echo $(($(du -ah "$TARGET_DIR" 2>/dev/null | wc -l) - 1)))"
-        echo
-        GREEN
-        printf "Total number of files in "
-        WHITE
-        printf "%s" "$TARGET_DIR"
-        GREEN
-        printf ": "
-        WHITE
-        echo "$TOTAL_FILE_COUNT"
-        echo
+        echo -e "\n${GREEN}Total number of files in ${WHITE}$TARGET_DIR${GREEN}: ${WHITE}$TOTAL_FILE_COUNT${NOCOLOR}\n"
     fi
+
 }
 
 CHECK_TARGET_DIR_EXISTS () {
-if [ ! -d "$TARGET_DIR" ]; then
-    LOOP
-fi
+
+    if [ ! -d "$TARGET_DIR" ]; then
+        LOOP
+    fi
+
 }
 
 GET_TARGET_DIR () {
-clear
-HEADER
-GREEN
-printf "Enter target path we're going to search recursively for files >= "
-WHITE
-printf "%s" "$SIZE"
-GREEN
-echo "M,"
-echo "or choose from the following directories:"
-echo
-WHITE
-printf "1) "
-GREEN
-echo "User Directories"
-WHITE
-printf "2) "
-GREEN
-echo "/var/log Directory"
-WHITE
-printf "3) "
-GREEN
-echo "cPanel Logs Directory"
-WHITE
-printf "4) "
-GREEN
-echo "MySQL Directory"
-WHITE
-printf "5) "
-GREEN
-echo "cPanel Backup Directory"
-echo
-WHITE
-printf "("
-GREEN
-printf "default "
-WHITE
-printf "= "
-GREEN
-printf "Root Directory"
-WHITE
-echo ")"
-echo
-WHITE
-echo -n "[enter choice or directory path]:"
-read DIR_CHOICE
-case "$DIR_CHOICE" in
-          1) TARGET_DIR=/home;;
-          2) TARGET_DIR=/var/log;;
-          3) TARGET_DIR=/usr/local/cpanel/logs;;
-          4) TARGET_DIR=/var/lib/mysql;;
-          5) TARGET_DIR=/backup;;
-          *) if [ -z "$DIR_CHOICE" ]; then
-                TARGET_DIR=/
-             elif ! [[ $DIR_CHOICE =~ $RE ]]; then
-                TARGET_DIR=$DIR_CHOICE
-             fi;;
-esac
+
+    clear
+    HEADER
+    echo -e "  ${GREEN}Enter target search path or choose from the list below${WHITE}:${NOCOLOR}\n"
+    echo -e "  ${WHITE}1) ${GREEN}/home Directory${NOCOLOR}"
+    echo -e "  ${WHITE}2) ${GREEN}/var/log Directory${NOCOLOR}"
+    echo -e "  ${WHITE}3) ${GREEN}/usr/local/cpanel/logs Directory${NOCOLOR}"
+    echo -e "  ${WHITE}4) ${GREEN}/var/lib/mysql Directory${NOCOLOR}"
+    echo -e "  ${WHITE}5) ${GREEN}/backup Directory${NOCOLOR}\n"
+    echo -e "  ${WHITE}( ${GREEN}default${WHITE} =${GREEN} / Root Directory${WHITE} )\n"
+    echo -n "  [enter choice or directory path]: "
+    read DIR_CHOICE
+    case "$DIR_CHOICE" in
+              1) TARGET_DIR=/home;;
+              2) TARGET_DIR=/var/log;;
+              3) TARGET_DIR=/usr/local/cpanel/logs;;
+              4) TARGET_DIR=/var/lib/mysql;;
+              5) TARGET_DIR=/backup;;
+              *) if [ -z "$DIR_CHOICE" ]; then
+                    TARGET_DIR=/
+                 elif ! [[ $DIR_CHOICE =~ $RE ]]; then
+                    TARGET_DIR=$DIR_CHOICE
+                 fi;;
+    esac
+
 }
 
 GET_INPUT () {
-GET_TARGET_FILESIZE
-GET_TARGET_DIR
-GET_FILECOUNTER_CHOICE
-CHECK_FILECOUNTER_CHOICE
+
+    GET_TARGET_FILESIZE
+    GET_TARGET_DIR
+    GET_FILECOUNTER_CHOICE
+    CHECK_FILECOUNTER_CHOICE
+
 }
 
 #####################
@@ -372,6 +247,27 @@ CHECK_FILECOUNTER_CHOICE
 ## END - FUNCTIONS ##
 ##-----------------##
 #####################
+
+#############################################
+##-----------------------------------------##
+## BEGIN - MAKE SURE WE'RE RUNNING AS ROOT ##
+##-----------------------------------------##
+#############################################
+
+if [ "$(id -u)" != "0" ]; then
+    echo -e "\n\n${RED}${BLINK}--------${NOCOLOR}"
+    echo -e "${RED}${BLINK}WARNING!${NOCOLOR}"
+    echo -e "${RED}${BLINK}--------${NOCOLOR}\n\n"
+    echo -e "${WHITE}sfs must be run as ${RED}root${NOCOLOR}\n\n"
+    echo -e "${GREEN}(Exiting now...)${NOCOLOR}\n\n"
+    exit 1
+fi
+
+###########################################
+##---------------------------------------##
+## END - MAKE SURE WE'RE RUNNING AS ROOT ##
+##---------------------------------------##
+###########################################
 
 #########################
 ##---------------------##
@@ -404,14 +300,15 @@ mkdir -p /root/support/logs/sfs_logs
 clear
 HEADER
 SEARCH 2>&1 | tee searchfile
-sed -i -e 's/[\x01-\x1F\x7F]//g' -e 's|\[1m\[32m||g' -e 's|(B\[m||g' -e 's|\[1m\[34m||g' -e 's|\[2A\[K||g' searchfile
+sed -i -e 's/[\x01-\x1F\x7F]//g' -e 's|\[1m\[32m||g' -e 's|(B\[m||g' -e 's|\[1m\[34m||g' -e 's|\[2A\[K||g' -e 's|\[1m\[37m||g' -e 's|\[0m||g' searchfile
 PASTE searchfile
 mv searchfile /root/support/logs/sfs_logs/sfs_"$HOSTNAME"_"$(date +"%m-%d-%Y_%T")"
 printf "\n\n"
-exit 0
 
 #######################
 ##-------------------##
 ## END - CORE SCRIPT ##
 ##-------------------##
 #######################
+
+exit 0
