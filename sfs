@@ -192,7 +192,7 @@ COUNT_FILES () {
 
     if [ "$FILECOUNTER" = "YES" ]; then
         TOTAL_FILE_COUNT="$(echo $(($(du -ah "$TARGET_DIR" 2>/dev/null | wc -l) - 1)))"
-        echo -e "\n${GREEN}Total number of files in ${WHITE}$TARGET_DIR${GREEN}: ${WHITE}$TOTAL_FILE_COUNT${NOCOLOR}\n"
+        echo -e "\n  ${GREEN}Total number of files in ${WHITE}$TARGET_DIR${GREEN}: ${WHITE}$TOTAL_FILE_COUNT${NOCOLOR}\n"
     fi
 
 }
