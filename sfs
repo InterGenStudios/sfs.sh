@@ -181,7 +181,7 @@ CHECK_FILECOUNTER_CHOICE () {
     else
         FILECOUNTER=YES
         echo -e "  ${GREEN}FILECOUNTER ENABLED"
-        GREEN
+        sleep 2
         echo "  Filecounter enabled\n  ${NOCOLOR}Getting target directory size..."
     fi
 
