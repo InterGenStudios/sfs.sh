@@ -149,7 +149,7 @@ SEARCH () {
 PASTE () {
 
     PASTEFILE=$@;
-    curl -d name=sfs -d private=1 --data-urlencode text@"$PASTEFILE" -s http://nobits.ml/api/create > TEMPASTE
+    curl -d name=sfs -d private=1 --data-urlencode text@"$PASTEFILE" -s https://paste.intergen.online/api/create > TEMPASTE
     sed -i 's/view/view\/raw/g' TEMPASTE
     SEPARATOR
     echo -e "  ${GREEN}Your results are at${WHITE}:\n"
