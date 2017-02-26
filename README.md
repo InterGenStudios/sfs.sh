@@ -4,4 +4,4 @@
 
 SFS is a simple cPanel server utility for finding files of a target size and pastebinning the results.
 
-Sample Output: https://paste.intergen.online/view/raw/c5fb34ae
+Sample Output: https://paste.intergen.online/view/raw/bf5f1ade
